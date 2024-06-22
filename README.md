@@ -15,7 +15,7 @@ DegenToken is implemented using the OpenZeppelin ERC20 contract. The contract in
 
 - **Token Name**: Degen
 - **Token Symbol**: DGN
-- **Initial Supply**: 1000 DGN
+- **Initial Supply**: 0 DGN
 
 ## Functions
 
