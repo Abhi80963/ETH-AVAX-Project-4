@@ -8,14 +8,12 @@ contract DegenToken is ERC20 {
 
     struct StoreItem {
         string ItemName;
-        uint256 Price;
+        uint Price;
     }
-
     StoreItem[] public storeItems;
-    mapping(address => uint256[]) public redeemedItemIds; 
+    mapping(address => mapping(uint => uint)) public redeemedItems;
 
     constructor() ERC20("Degen", "DGN") {
-        _mint(msg.sender, 0);
         owner = msg.sender;
 
         storeItems.push(StoreItem("Sword", 100));
@@ -30,24 +28,48 @@ contract DegenToken is ERC20 {
         _;
     }
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint amount) public onlyOwner {
         _mint(to, amount);
     }
 
-    function redeemTokens(uint256 itemId) external {
+    function burn(uint amount) public {
+        _burn(msg.sender, amount);
+    }
+
+    function RedeemTokens(uint itemId) external {
         require(itemId < storeItems.length, "Invalid item ID");
-        uint256 itemPrice = storeItems[itemId].Price;
+        uint itemPrice = storeItems[itemId].Price;
         require(balanceOf(msg.sender) >= itemPrice, "Insufficient balance");
 
         _transfer(msg.sender, owner, itemPrice);
-        redeemedItemIds[msg.sender].push(itemId);
+        redeemedItems[msg.sender][itemId] += 1;
     }
 
-    function getPlayerRedeemedItems(address player) external view returns (uint256[] memory) {
-        return redeemedItemIds[player];
-    }
+    function PlayerInventory(address player) external view returns (string[] memory, uint[] memory, uint[] memory) {
+        uint itemCount = storeItems.length;
+        uint[] memory itemQuantities = new uint[](itemCount);
+        uint redeemedItemCount = 0;
 
-    function burn(uint256 amount) public {
-        _burn(msg.sender, amount);
+        for (uint i = 0; i < itemCount; i++) {
+            itemQuantities[i] = redeemedItems[player][i];
+            if (itemQuantities[i] > 0) {
+                redeemedItemCount++;
+            }
+        }
+
+        string[] memory itemNames = new string[](redeemedItemCount);
+        uint[] memory itemAmounts = new uint[](redeemedItemCount);
+        uint[] memory itemPrices = new uint[](redeemedItemCount);
+        uint index = 0;
+
+        for (uint i = 0; i < itemCount; i++) {
+            if (itemQuantities[i] > 0) {
+                itemNames[index] = storeItems[i].ItemName;
+                itemAmounts[index] = itemQuantities[i];
+                itemPrices[index] = storeItems[i].Price;
+                index++;
+            }
+        }
+        return (itemNames, itemAmounts, itemPrices);
     }
 }
