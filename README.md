@@ -9,7 +9,9 @@ DegenToken is implemented using the OpenZeppelin ERC20 contract. The contract in
 
 - **Minting**: Only the contract owner can mint new tokens.
 - **Burning**: Any token holder can burn their tokens.
-- **Store**: A list of items that can be redeemed using the tokens. Only the owner can add new items to the store.
+- **Transfer**: A player can transfer tokens to other players.
+- **Balance**: Player can check their balance.
+- **RedeemTokens**: A player can redeem the store items by paying specific price.
 
 ## Contract Details
 
@@ -21,23 +23,23 @@ DegenToken is implemented using the OpenZeppelin ERC20 contract. The contract in
 
 ### Owner-Only Functions
 
-1. **mint(address to, uint256 amount)**
+1. **mint(address to, uint amount)**
    - Mints new tokens and assigns them to the specified address.
-   - Only callable by the contract owner.
-
-2. **addStoreItem(string memory itemName, uint256 price)**
-   - Adds a new item to the store with a specified name and price.
    - Only callable by the contract owner.
 
 ### Public Functions
 
-1. **redeemTokens(uint256 itemId)**
+1. **RedeemTokens(uint itemId)**
    - Redeems tokens for a store item. The token price of the item is transferred from the caller to the owner.
    - Callable by any user with sufficient token balance.
 
-2. **burn(uint256 amount)**
+2. **burn(uint amount)**
    - Burns a specified amount of tokens from the caller's balance.
    - Callable by any user.
+
+3. **PlayerInventory(address player)**
+   - Shows the redeem Items by the player in his inventory.
+   - it returns Item-Name,Item-Amounts,Item-Price.
 
 ## Deployment
 
