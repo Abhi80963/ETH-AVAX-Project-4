@@ -41,7 +41,7 @@ contract DegenToken is ERC20 {
         uint itemPrice = storeItems[itemId].Price;
         require(balanceOf(msg.sender) >= itemPrice, "Insufficient balance");
 
-        _transfer(msg.sender, owner, itemPrice);
+        _burn(msg.sender, itemPrice);
         redeemedItems[msg.sender][itemId] += 1;
     }
 
